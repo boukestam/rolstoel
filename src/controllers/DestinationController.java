@@ -24,20 +24,21 @@ public class DestinationController extends Controller{
 	// -1 == LeftSensor   and    0 == RightSensor
 	private String lastDetectedSensor="none";
 	
-	private int SPEED=15;
-	private int TURN_SPEED=10;
+	private float SPEED=20;
+	private float TURN_SPEED=18;
 	
-	private final int INIT_TURN_RADIUS=20;
-	private final int STRAIGHT_TURN_RADIUS=80;
-	private int turnRadius=INIT_TURN_RADIUS;
+	private final float INIT_TURN_RADIUS=20;
+	private final float STRAIGHT_TURN_RADIUS=80;
+	private final float TURN_ACCELERATION=5;
+	private float turnRadius=INIT_TURN_RADIUS;
 	
 	public DestinationController(){
 		this.leftLightSensor=new MyColorSensor(SensorPort.S3);
 		this.rightLightSensor=new MyLightSensor(SensorPort.S1);
 		this.rangeSensor=new MyRangeSensor(SensorPort.S2);
 		
-		UpdateHandler.registerUpdatable(leftLightSensor, 50);
-		UpdateHandler.registerUpdatable(rightLightSensor, 50);
+		UpdateHandler.registerUpdatable(leftLightSensor, 10);
+		UpdateHandler.registerUpdatable(rightLightSensor, 10);
 		UpdateHandler.registerUpdatable(rangeSensor, 100);
 		
 		leftLightSensor.addListener(this);
@@ -52,7 +53,15 @@ public class DestinationController extends Controller{
 
 	@Override
 	public void control() {
-		
+		if((blackLeft&&blackRight)||(!blackLeft&&blackRight)){
+			turnRadius-=TURN_ACCELERATION*(TURN_SPEED/2);
+			if(turnRadius<0){
+				turnRadius=0;
+			}
+		}
+		try{
+			Thread.sleep(100);
+		}catch(Exception e){}
 	}
 
 	@Override
@@ -61,7 +70,7 @@ public class DestinationController extends Controller{
 			if(source==rangeSensor){
 				//if range distance is less then 20 cm
 				if(value<20){
-					avoidController.switchToController(this);
+					//avoidController.switchToController(this);
 				}
 			}
 			
@@ -82,37 +91,29 @@ public class DestinationController extends Controller{
 			// Left and Right sensor detecting the black line
 			if(blackLeft&&blackRight){
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnSmoothRight(turnRadius,TURN_SPEED);
+					Driver.turnSmoothRight(turnRadius,(int) TURN_SPEED);
 				}else{
-					Driver.turnSmoothLeft(turnRadius,TURN_SPEED);
-				}
-				turnRadius-=5;
-				if(turnRadius<0){
-					turnRadius=0;
+					Driver.turnSmoothLeft(turnRadius,(int) TURN_SPEED);
 				}
 			}
 			// Left sensor detecting the black line
 			else if(blackLeft){
-				Driver.turnSmoothLeft(STRAIGHT_TURN_RADIUS,SPEED);
+				Driver.turnSmoothLeft(STRAIGHT_TURN_RADIUS,(int) SPEED);
 				lastDetectedSensor="left";
 				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Right sensor detecting the black line
 			else if(blackRight){
-				Driver.turnSmoothRight(STRAIGHT_TURN_RADIUS,SPEED);
+				Driver.turnSmoothRight(STRAIGHT_TURN_RADIUS,(int) SPEED);
 				lastDetectedSensor="right";
 				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Both sensors not detecting the black line
 			else{
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnSmoothLeft(turnRadius,TURN_SPEED);
+					Driver.turnSmoothLeft(turnRadius,(int) TURN_SPEED);
 				}else{
-					Driver.turnSmoothRight(turnRadius,TURN_SPEED);
-				}
-				turnRadius-=5;
-				if(turnRadius<0){
-					turnRadius=0;
+					Driver.turnSmoothRight(turnRadius,(int) TURN_SPEED);
 				}
 			}
 		}
