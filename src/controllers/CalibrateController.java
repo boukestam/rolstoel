@@ -22,9 +22,13 @@ public class CalibrateController extends Controller{
 
 	@Override
 	public void control() {
+		LCD.clear(1);
+		LCD.drawString("Zet sensoren op WIT", 0, 1);
 		Button.waitForAnyPress();
 		leftLightSensor.calibrateHigh();
 		rightLightSensor.calibrateHigh();
+		LCD.clear(1);
+		LCD.drawString("Zet sensoren op ZWART", 0, 1);
 		Button.waitForAnyPress();
 		leftLightSensor.calibrateLow();
 		rightLightSensor.calibrateLow();
