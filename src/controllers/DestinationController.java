@@ -21,7 +21,7 @@ public class DestinationController extends Controller{
 	private Controller avoidController,calibrateController;
 	
 	private boolean blackLeft=false,blackRight=false;
-	// -1 == LeftSensor   and    0 == RightSensor
+	// -1 == LeftSensor and 0 == RightSensor
 	private String lastDetectedSensor="none";
 	
 	private float SPEED=10;
@@ -30,6 +30,7 @@ public class DestinationController extends Controller{
 	private final float INIT_TURN_RADIUS=10;
 	private final float STRAIGHT_TURN_RADIUS=120;
 	private final float TURN_ACCELERATION=20;
+	
 	private float turnRadius=INIT_TURN_RADIUS;
 	
 	public DestinationController(){
