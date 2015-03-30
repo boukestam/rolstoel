@@ -63,6 +63,7 @@ public class Driver {
 	public static void turnSmoothLeft(float radius,int speed) {
 		float i = radius;
 		if (i <= 0) {
+			//kan niet kleiner dan 0
 			i = WHEEL_CENTER_DISTANCE / 2;
 		}
 		driveArc(speed, -1 * i);
