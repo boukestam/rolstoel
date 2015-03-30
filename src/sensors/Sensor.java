@@ -21,7 +21,7 @@ public abstract class Sensor implements Updatable{
 	private ArrayList<SensorListener> listeners;
 	
 	/**
-	 * Constructor initializing variables
+	 * Constructor initializing variables.
 	 */
 	public Sensor(){
 		listeners = new ArrayList<SensorListener>();
