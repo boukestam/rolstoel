@@ -24,16 +24,20 @@ public class DestinationController extends Controller{
 	// -1 == LeftSensor   and    0 == RightSensor
 	private String lastDetectedSensor="none";
 	
-	private int speed=300;
-	private int turnSpeed=200;
+	private int SPEED=15;
+	private int TURN_SPEED=10;
+	
+	private final int INIT_TURN_RADIUS=20;
+	private final int STRAIGHT_TURN_RADIUS=80;
+	private int turnRadius=INIT_TURN_RADIUS;
 	
 	public DestinationController(){
 		this.leftLightSensor=new MyColorSensor(SensorPort.S3);
 		this.rightLightSensor=new MyLightSensor(SensorPort.S1);
 		this.rangeSensor=new MyRangeSensor(SensorPort.S2);
 		
-		UpdateHandler.registerUpdatable(leftLightSensor, 100);
-		UpdateHandler.registerUpdatable(rightLightSensor, 100);
+		UpdateHandler.registerUpdatable(leftLightSensor, 50);
+		UpdateHandler.registerUpdatable(rightLightSensor, 50);
 		UpdateHandler.registerUpdatable(rangeSensor, 100);
 		
 		leftLightSensor.addListener(this);
@@ -78,27 +82,37 @@ public class DestinationController extends Controller{
 			// Left and Right sensor detecting the black line
 			if(blackLeft&&blackRight){
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnRight(turnSpeed);
+					Driver.turnSmoothRight(turnRadius,TURN_SPEED);
 				}else{
-					Driver.turnLeft(turnSpeed);
+					Driver.turnSmoothLeft(turnRadius,TURN_SPEED);
+				}
+				turnRadius-=5;
+				if(turnRadius<0){
+					turnRadius=0;
 				}
 			}
 			// Left sensor detecting the black line
 			else if(blackLeft){
-				Driver.driveForward(speed);
+				Driver.turnSmoothLeft(STRAIGHT_TURN_RADIUS,SPEED);
 				lastDetectedSensor="left";
+				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Right sensor detecting the black line
 			else if(blackRight){
-				Driver.driveForward(speed);
+				Driver.turnSmoothRight(STRAIGHT_TURN_RADIUS,SPEED);
 				lastDetectedSensor="right";
+				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Both sensors not detecting the black line
 			else{
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnLeft(turnSpeed);
+					Driver.turnSmoothLeft(turnRadius,TURN_SPEED);
 				}else{
-					Driver.turnRight(turnSpeed);
+					Driver.turnSmoothRight(turnRadius,TURN_SPEED);
+				}
+				turnRadius-=5;
+				if(turnRadius<0){
+					turnRadius=0;
 				}
 			}
 		}

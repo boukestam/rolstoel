@@ -59,6 +59,22 @@ public class Driver {
 		leftWheel.stop();
 		rightWheel.stop();
 	}
+
+	public static void turnSmoothLeft(float radius,int speed) {
+		float i = radius;
+		if (i <= 0) {
+			i = WHEEL_CENTER_DISTANCE / 2;
+		}
+		driveArc(speed, -1 * i);
+	}
+
+	public static void turnSmoothRight(float radius,int speed) {
+		float i = radius;
+		if (i <= 0) {
+			i = WHEEL_CENTER_DISTANCE / 2;
+		}
+		driveArc(speed, i);
+	}
 	
 	public static void driveArc(float speed,float radius) {
 		//get the absolute radius so it doesn't have problems with negative radius (to the right)
@@ -95,9 +111,10 @@ public class Driver {
 		}
 	}
 
-	public static void driveForward(int speed) {
-		leftWheel.setSpeed(speed);
-		rightWheel.setSpeed(speed);
+	public static void driveForward(float speed) {	//cm per second
+		int degreesPerSecond=(int) (speed/WHEEL_CIRCUMFERENCE*360);
+		leftWheel.setSpeed(degreesPerSecond);
+		rightWheel.setSpeed(degreesPerSecond);
 		driveForward();
 	}
 
