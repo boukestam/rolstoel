@@ -26,7 +26,7 @@ public class DestinationController extends Controller{
 	
 	private float SPEED=20;
 	private float TURN_SPEED=18;
-	//Test
+
 	private final float INIT_TURN_RADIUS=20;
 	private final float STRAIGHT_TURN_RADIUS=80;
 	private final float TURN_ACCELERATION=5;
