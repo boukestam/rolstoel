@@ -24,12 +24,12 @@ public class DestinationController extends Controller{
 	// -1 == LeftSensor   and    0 == RightSensor
 	private String lastDetectedSensor="none";
 	
-	private float SPEED=20;
-	private float TURN_SPEED=18;
+	private float SPEED=10;
+	private float TURN_SPEED=SPEED;
 	
-	private final float INIT_TURN_RADIUS=20;
-	private final float STRAIGHT_TURN_RADIUS=80;
-	private final float TURN_ACCELERATION=5;
+	private final float INIT_TURN_RADIUS=10;
+	private final float STRAIGHT_TURN_RADIUS=120;
+	private final float TURN_ACCELERATION=20;
 	private float turnRadius=INIT_TURN_RADIUS;
 	
 	public DestinationController(){
@@ -70,7 +70,7 @@ public class DestinationController extends Controller{
 			if(source==rangeSensor){
 				//if range distance is less then 20 cm
 				if(value<20){
-					//avoidController.switchToController(this);
+					avoidController.switchToController(this);
 				}
 			}
 			

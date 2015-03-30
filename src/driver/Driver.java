@@ -6,7 +6,7 @@ import lejos.nxt.NXTRegulatedMotor;
 public class Driver {
 
 	private static NXTRegulatedMotor leftWheel, rightWheel, rangeMotor;
-	private static final float WHEEL_CENTER_DISTANCE = 11.3f; // cm
+	public static final float WHEEL_CENTER_DISTANCE = 11.3f; // cm
 	private static final float WHEEL_DIAMETER = 4.32f; // cm
 	private static final float WHEEL_CIRCUMFERENCE = (float) Math.PI
 			* WHEEL_DIAMETER; // cm
@@ -126,6 +126,11 @@ public class Driver {
 
 	public static void turnRangeSensor(int angle) {
 		rangeMotor.rotate(angle);
+	}
+	
+	public static void stop(){
+		leftWheel.stop();
+		rightWheel.stop();
 	}
 
 }

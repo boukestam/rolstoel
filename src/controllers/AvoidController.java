@@ -14,6 +14,7 @@ public class AvoidController extends Controller{
 	private Sensor leftLightSensor, rightLightSensor, rangeSensor;
 	
 	private boolean justStarted=true;
+	private boolean seenOnce=false;
 	
 	private int threshold=10;	//cm
 	private int distance=20;	//cm
@@ -32,22 +33,52 @@ public class AvoidController extends Controller{
 		if(justStarted){
 			Driver.turnAngle(90,100);
 			Driver.turnRangeSensor(-90);
-			Driver.driveForward(200);
+			Driver.driveForward(20);
 			justStarted=false;
+			seenOnce=false;
+			lastDirection="left";
+			Driver.turnSmoothLeft(0,5);
 		}
 	}
+	
+	private String lastDirection;
+	private boolean lostSight=false;
 
 	@Override
 	public void valueChanged(Sensor source, int value){
 		if(super.isRunning()){
 			if(!justStarted){
 				if(source==rangeSensor){
-					if(value>=distance+threshold){
-						Driver.turnLeft(50);
-					}else if(value<=distance-threshold){
-						Driver.turnRight(50);
+					if(value<=distance){
+						seenOnce=true;
+					}
+					if(!seenOnce){
+						lastDirection="left";
+						Driver.turnSmoothLeft(0,5);
 					}else{
-						Driver.driveForward(200);
+						if(value>=distance+threshold){
+							if(!lostSight){
+								switch(lastDirection){
+								case "left":
+									Driver.turnSmoothRight(0,5);
+									lastDirection="right";
+									break;
+								case "right":
+									Driver.turnSmoothLeft(0,5);
+									lastDirection="left";
+									break;
+								case "straight":
+									Driver.turnSmoothLeft(0,5);
+									lastDirection="left";
+									break;
+								}
+							}
+							lostSight=true;
+						}else{
+							lostSight=false;
+							Driver.turnSmoothRight(20,5);
+							lastDirection="straight";
+						}
 					}
 					LCD.clear(5);
 					LCD.drawString("Distance: "+value, 0, 5);
