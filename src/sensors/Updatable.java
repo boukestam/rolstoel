@@ -5,7 +5,12 @@
 
 package sensors;
 
+/**
+ * The interface that gets called by UpdateHandler.
+ * @author Bouke Stam
+ * @version 1.0
+ */
+
 public interface Updatable {
-	
 	public void update();
 }
