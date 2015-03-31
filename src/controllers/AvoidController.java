@@ -24,7 +24,6 @@ public class AvoidController extends Controller{
 	private boolean lostSight=false;
 	private boolean foundLine=false;
 	
-	private boolean blackLeft=false;
 	private boolean blackRight=false;
 	
 	public AvoidController(Sensor leftLightSensor,Sensor rightLightSensor,Sensor rangeSensor){
@@ -81,17 +80,16 @@ public class AvoidController extends Controller{
 					}
 				}else if(source==leftLightSensor){
 					if(value==1){
-						blackLeft=true;
 						if(!blackRight){
+							//only left sensor sees black
 							this.switchBackToCaller();
 						}
-					}else{
-						blackLeft=false;
 					}
 				}else if(source==rightLightSensor){
 					if(value==1){
+						//right sensor sees black
 						blackRight=true;
-						Driver.turnRight(2);
+						Driver.turnSmoothRight(2,2);
 						foundLine=true;
 					}else{
 						blackRight=false;
