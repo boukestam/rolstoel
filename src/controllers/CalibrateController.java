@@ -22,6 +22,16 @@ public class CalibrateController extends Controller{
 
 	@Override
 	public void control() {
+		
+	}
+
+	@Override
+	public void valueChanged(Sensor source, int value) {
+		
+	}
+
+	@Override
+	public void onStart() {
 		LCD.clear(1);
 		LCD.drawString("Zet op WIT", 0, 1);
 		Button.waitForAnyPress();
@@ -37,7 +47,7 @@ public class CalibrateController extends Controller{
 	}
 
 	@Override
-	public void valueChanged(Sensor source, int value) {
+	public void onStop() {
 		
 	}
 }

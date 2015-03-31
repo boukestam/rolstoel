@@ -18,9 +18,10 @@ public class Driver {
 		rangeMotor.resetTachoCount();
 	}
 
-	public static void turnLeft(int speed) {
-		leftWheel.setSpeed(speed);
-		rightWheel.setSpeed(speed);
+	public static void turnLeft(float speed) {
+		int degreesPerSecond=(int) (speed/WHEEL_CIRCUMFERENCE*360);
+		leftWheel.setSpeed(degreesPerSecond);
+		rightWheel.setSpeed(degreesPerSecond);
 		turnLeft();
 	}
 
@@ -29,9 +30,10 @@ public class Driver {
 		rightWheel.forward();
 	}
 
-	public static void turnRight(int speed) {
-		leftWheel.setSpeed(speed);
-		rightWheel.setSpeed(speed);
+	public static void turnRight(float speed) {
+		int degreesPerSecond=(int) (speed/WHEEL_CIRCUMFERENCE*360);
+		leftWheel.setSpeed(degreesPerSecond);
+		rightWheel.setSpeed(degreesPerSecond);
 		turnRight();
 	}
 
@@ -126,6 +128,10 @@ public class Driver {
 
 	public static void turnRangeSensor(int angle) {
 		rangeMotor.rotate(angle);
+	}
+	
+	public static void resetRangeSensorTachoCount(){
+		rangeMotor.resetTachoCount();
 	}
 	
 	public static void stop(){

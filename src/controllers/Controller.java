@@ -20,6 +20,7 @@ public abstract class Controller extends Thread implements SensorListener{
 	}
 	
 	public void startController(){
+		this.onStart();
 		if(!this.isAlive()){
 			this.start();
 		}
@@ -27,6 +28,7 @@ public abstract class Controller extends Thread implements SensorListener{
 	}
 	
 	public void stopController(){
+		this.onStop();
 		this.setRunning(false);
 	}
 	
@@ -60,5 +62,11 @@ public abstract class Controller extends Thread implements SensorListener{
 	public abstract void control();
 	
 	public abstract void valueChanged(Sensor source,int value);
+	
+	//Gets called when controller is (re)started
+	public abstract void onStart();
+	
+	//Gets called when controller is stopped
+	public abstract void onStop();
 
 }

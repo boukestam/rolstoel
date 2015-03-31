@@ -6,7 +6,6 @@
 package controllers;
 
 import driver.Driver;
-import lejos.nxt.LCD;
 import lejos.nxt.SensorPort;
 import sensors.MyColorSensor;
 import sensors.MyLightSensor;
@@ -21,7 +20,7 @@ public class DestinationController extends Controller{
 	private Controller avoidController,calibrateController;
 	
 	private boolean blackLeft=false,blackRight=false;
-	// -1 == LeftSensor and 0 == RightSensor
+	
 	private String lastDetectedSensor="none";
 	
 	private float SPEED=10;
@@ -71,6 +70,7 @@ public class DestinationController extends Controller{
 			if(source==rangeSensor){
 				//if range distance is less then 20 cm
 				if(value<20){
+					lastDetectedSensor="left";
 					avoidController.switchToController(this);
 				}
 			}
@@ -92,9 +92,9 @@ public class DestinationController extends Controller{
 			// Left and Right sensor detecting the black line
 			if(blackLeft&&blackRight){
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnSmoothRight(turnRadius,(int) TURN_SPEED);
+					Driver.turnRight(TURN_SPEED);
 				}else{
-					Driver.turnSmoothLeft(turnRadius,(int) TURN_SPEED);
+					Driver.turnLeft(TURN_SPEED);
 				}
 			}
 			// Left sensor detecting the black line
@@ -118,5 +118,15 @@ public class DestinationController extends Controller{
 				}
 			}
 		}
+	}
+
+	@Override
+	public void onStart() {
+		
+	}
+
+	@Override
+	public void onStop() {
+		
 	}
 }

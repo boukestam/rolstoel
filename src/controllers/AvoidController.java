@@ -5,7 +5,6 @@
 
 package controllers;
 
-import lejos.nxt.LCD;
 import driver.Driver;
 import sensors.Sensor;
 
@@ -19,6 +18,15 @@ public class AvoidController extends Controller{
 	private int threshold=10;	//cm
 	private int distance=20;	//cm
 	
+	private int SPEED=10;
+	
+	private String lastDirection;
+	private boolean lostSight=false;
+	private boolean foundLine=false;
+	
+	private boolean blackLeft=false;
+	private boolean blackRight=false;
+	
 	public AvoidController(Sensor leftLightSensor,Sensor rightLightSensor,Sensor rangeSensor){
 		leftLightSensor.addListener(this);
 		rightLightSensor.addListener(this);
@@ -30,19 +38,8 @@ public class AvoidController extends Controller{
 	
 	@Override
 	public void control(){
-		if(justStarted){
-			Driver.turnAngle(90,100);
-			Driver.turnRangeSensor(-90);
-			Driver.driveForward(20);
-			justStarted=false;
-			seenOnce=false;
-			lastDirection="left";
-			Driver.turnSmoothLeft(0,5);
-		}
+		
 	}
-	
-	private String lastDirection;
-	private boolean lostSight=false;
 
 	@Override
 	public void valueChanged(Sensor source, int value){
@@ -52,41 +49,76 @@ public class AvoidController extends Controller{
 					if(value<=distance){
 						seenOnce=true;
 					}
-					if(!seenOnce){
-						lastDirection="left";
-						Driver.turnSmoothLeft(0,5);
-					}else{
-						if(value>=distance+threshold){
-							if(!lostSight){
-								switch(lastDirection){
-								case "left":
-									Driver.turnSmoothRight(0,5);
-									lastDirection="right";
-									break;
-								case "right":
-									Driver.turnSmoothLeft(0,5);
-									lastDirection="left";
-									break;
-								case "straight":
-									Driver.turnSmoothLeft(0,5);
-									lastDirection="left";
-									break;
-								}
-							}
-							lostSight=true;
+					if(!foundLine){
+						if(!seenOnce){
+							lastDirection="left";
+							Driver.turnSmoothLeft(0,SPEED);
 						}else{
-							lostSight=false;
-							Driver.turnSmoothRight(20,5);
-							lastDirection="straight";
+							if(value>=distance+threshold){
+								if(!lostSight){
+									switch(lastDirection){
+									case "left":
+										Driver.turnSmoothRight(0,SPEED);
+										lastDirection="right";
+										break;
+									case "right":
+										Driver.turnSmoothLeft(0,SPEED);
+										lastDirection="left";
+										break;
+									case "straight":
+										Driver.turnSmoothLeft(15,SPEED);
+										lastDirection="left";
+										break;
+									}
+								}
+								lostSight=true;
+							}else{
+								lostSight=false;
+								Driver.turnSmoothRight(20,SPEED);
+								lastDirection="straight";
+							}
 						}
 					}
-					LCD.clear(5);
-					LCD.drawString("Distance: "+value, 0, 5);
-				}else if((source==leftLightSensor&&value==1)||(source==rightLightSensor&&value==1)){
-					Driver.turnRangeSensor(90);
-					this.switchBackToCaller();
+				}else if(source==leftLightSensor){
+					if(value==1){
+						blackLeft=true;
+						if(!blackRight){
+							this.switchBackToCaller();
+						}
+					}else{
+						blackLeft=false;
+					}
+				}else if(source==rightLightSensor){
+					if(value==1){
+						blackRight=true;
+						Driver.turnRight(2);
+						foundLine=true;
+					}else{
+						blackRight=false;
+					}
 				}
 			}
 		}
+	}
+
+	@Override
+	public void onStart() {
+		Driver.turnAngle(90,100);
+		Driver.resetRangeSensorTachoCount();
+		Driver.turnRangeSensor(-90);
+		Driver.driveForward(20);
+		justStarted=false;
+		seenOnce=false;
+		foundLine=false;
+		lostSight=false;
+		lastDirection="left";
+		Driver.turnSmoothLeft(0,5);
+	}
+
+	@Override
+	public void onStop() {
+		Driver.stop();
+		Driver.turnRangeSensor(90);
+		justStarted=true;
 	}
 }
