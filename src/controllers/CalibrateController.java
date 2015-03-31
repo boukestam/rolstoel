@@ -32,6 +32,7 @@ public class CalibrateController extends Controller{
 		Button.waitForAnyPress();
 		leftLightSensor.calibrateLow();
 		rightLightSensor.calibrateLow();
+		LCD.clear(1);
 		
 		this.switchBackToCaller();
 	}
