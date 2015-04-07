@@ -12,5 +12,9 @@ package sensors;
  */
 
 public interface Updatable {
+	
+	/**
+	 * Method that must be implemented by sub class. This update() method gets called by the Task class.
+	 */
 	public void update();
 }

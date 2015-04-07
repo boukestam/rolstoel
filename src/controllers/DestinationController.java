@@ -1,8 +1,3 @@
-/*
- * Auteur: Noah Steijlen
- * Datum: 3-10-2015
- */
-
 package controllers;
 
 import driver.Driver;
@@ -13,25 +8,70 @@ import sensors.MyRangeSensor;
 import sensors.Sensor;
 import sensors.UpdateHandler;
 
-public class DestinationController extends Controller{
+/**
+ * The controller that tries to follow the line to the destination.
+ * @author Noah Steijlen
+ * @author Scott Mackay
+ * @author Bouke Stam
+ * @author Timon van den Brink
+ * @version 1.0
+ */
 
+public class DestinationController extends Controller{
+	
+	/**
+	 * Objects used to find out which sensor is which.
+	 */
 	private Sensor leftLightSensor, rightLightSensor, rangeSensor;
 	
+	/**
+	 * Object to the other controllers.
+	 */
 	private Controller avoidController,calibrateController;
 	
+	/**
+	 * Booleans remembering if the right or left sensor detected the black line.
+	 */
 	private boolean blackLeft=false,blackRight=false;
 	
+	/**
+	 * Says if the left or right light sensor detected the line for the last time.
+	 */
 	private String lastDetectedSensor="none";
 	
-	private float SPEED=10;
-	private float TURN_SPEED=SPEED;
+	/**
+	 * The speed of the robot turning.
+	 */
+	private final float SPEED=10;
 	
+	/**
+	 * The speed of the robot turning in curves.
+	 */
+	private final float TURN_SPEED=SPEED;
+	
+	/**
+	 * The starting turn radius when the robot found the line.
+	 */
 	private final float INIT_TURN_RADIUS=10;
+	
+	/**
+	 * The starting turn radius when the robot is on the line and tries to stay on the line.
+	 */
 	private final float STRAIGHT_TURN_RADIUS=120;
+	
+	/**
+	 * The start acceleration of the robot turning.
+	 */
 	private final float TURN_ACCELERATION=20;
 	
+	/**
+	 * The current acceleration of the robot turning.
+	 */
 	private float turnRadius=INIT_TURN_RADIUS;
 	
+	/**
+	 * Initialized the sensors and listens to the sensors.
+	 */
 	public DestinationController(){
 		this.leftLightSensor=new MyColorSensor(SensorPort.S3);
 		this.rightLightSensor=new MyLightSensor(SensorPort.S1);
@@ -50,7 +90,10 @@ public class DestinationController extends Controller{
 		
 		calibrateController.switchToController(this);
 	}
-
+	
+	/**
+	 * IN this method the turn radius slowly decreases so the robot will turn faster and faster.
+	 */
 	@Override
 	public void control() {
 		if((blackLeft&&blackRight)||(!blackLeft&&blackRight)){
@@ -63,7 +106,14 @@ public class DestinationController extends Controller{
 			Thread.sleep(100);
 		}catch(Exception e){}
 	}
-
+	
+	/**
+	 * When the value of one of the sensors that this object is listening for has changed, 
+	 * this method gets called with the new value and the sensor. In this method all logic of
+	 * keep following the line and finding back the line is here controlled.
+	 * @source the sensor who's value has changed.
+	 * @value the new value of the sensor.
+	 */
 	@Override
 	public void valueChanged(Sensor source, int value) {
 		if(super.isRunning()){
@@ -99,32 +149,32 @@ public class DestinationController extends Controller{
 			}
 			// Left sensor detecting the black line
 			else if(blackLeft){
-				Driver.turnSmoothLeft(STRAIGHT_TURN_RADIUS,(int) SPEED);
+				Driver.driveSmoothLeft(STRAIGHT_TURN_RADIUS,(int) SPEED);
 				lastDetectedSensor="left";
 				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Right sensor detecting the black line
 			else if(blackRight){
-				Driver.turnSmoothRight(STRAIGHT_TURN_RADIUS,(int) SPEED);
+				Driver.driveSmoothRight(STRAIGHT_TURN_RADIUS,(int) SPEED);
 				lastDetectedSensor="right";
 				turnRadius=INIT_TURN_RADIUS;
 			}
 			// Both sensors not detecting the black line
 			else{
 				if(lastDetectedSensor.equals("left")){
-					Driver.turnSmoothLeft(turnRadius,(int) TURN_SPEED);
+					Driver.driveSmoothLeft(turnRadius,(int) TURN_SPEED);
 				}else{
-					Driver.turnSmoothRight(turnRadius,(int) TURN_SPEED);
+					Driver.driveSmoothRight(turnRadius,(int) TURN_SPEED);
 				}
 			}
 		}
 	}
-
+	
 	@Override
 	public void onStart() {
 		
 	}
-
+	
 	@Override
 	public void onStop() {
 		

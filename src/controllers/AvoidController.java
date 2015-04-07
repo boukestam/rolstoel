@@ -1,31 +1,75 @@
-/*
- * Auteur: Noah Steijlen
- * Datum: 3-10-2015
- */
-
 package controllers;
 
 import driver.Driver;
 import sensors.Sensor;
 
+/**
+ * This controller need to drive around an obstacle blocking the path.
+ * @author Noah Steijlen
+ * @author Scott Mackay
+ * @author Bouke Stam
+ * @author Timon van den Brink
+ * @version 1.0
+ */
+
 public class AvoidController extends Controller{
 	
+	/**
+	 * Objects used to find out which sensor is which.
+	 */
 	private Sensor leftLightSensor, rightLightSensor, rangeSensor;
 	
+	/**
+	 * Boolean that says if this controller just started. After the onStart() method is executed this boolean will be set to zero.
+	 */
 	private boolean justStarted=true;
+	
+	/**
+	 * Boolean that checks if the robot has already seen the obstacle before.
+	 */
 	private boolean seenOnce=false;
 	
+	/**
+	 * The deviation of the distance where the robot tries to stay.
+	 */
 	private int threshold=10;	//cm
+	
+	/**
+	 * The distance where the robot tries to stay.
+	 */
 	private int distance=20;	//cm
 	
-	private int SPEED=10;
+	/**
+	 * The speed of the robot driving.
+	 */
+	private final int SPEED=10;
 	
+	/**
+	 * The last remembered direction in which the robot was driving.
+	 */
 	private String lastDirection;
+	
+	/**
+	 * Tells if the robot is not detecting the obstacle.
+	 */
 	private boolean lostSight=false;
+	
+	/**
+	 * Tells if the line was found.
+	 */
 	private boolean foundLine=false;
 	
+	/**
+	 * Tells if the right light sensor is detecting the line.
+	 */
 	private boolean blackRight=false;
 	
+	/**
+	 * Initialized the sensors and listens to the sensors.
+	 * @param leftLightSensor the object of the left light sensor.
+	 * @param rightLightSensor the object of the right light sensor
+	 * @param rangeSensor the object of the range sensor.
+	 */
 	public AvoidController(Sensor leftLightSensor,Sensor rightLightSensor,Sensor rangeSensor){
 		leftLightSensor.addListener(this);
 		rightLightSensor.addListener(this);
@@ -39,7 +83,14 @@ public class AvoidController extends Controller{
 	public void control(){
 		
 	}
-
+	
+	/**
+	 * When the value of one of the sensors that this object is listening for has changed, 
+	 * this method gets called with the new value and the sensor. In this method all logic of
+	 * moving around the obstacle and finding back the line is here controlled.
+	 * @source the sensor who's value has changed.
+	 * @value the new value of the sensor.
+	 */
 	@Override
 	public void valueChanged(Sensor source, int value){
 		if(super.isRunning()){
@@ -51,21 +102,21 @@ public class AvoidController extends Controller{
 					if(!foundLine){
 						if(!seenOnce){
 							lastDirection="left";
-							Driver.turnSmoothLeft(0,SPEED);
+							Driver.driveSmoothLeft(0,SPEED);
 						}else{
 							if(value>=distance+threshold){
 								if(!lostSight){
 									switch(lastDirection){
 									case "left":
-										Driver.turnSmoothRight(0,SPEED);
+										Driver.driveSmoothRight(0,SPEED);
 										lastDirection="right";
 										break;
 									case "right":
-										Driver.turnSmoothLeft(0,SPEED);
+										Driver.driveSmoothLeft(0,SPEED);
 										lastDirection="left";
 										break;
 									case "straight":
-										Driver.turnSmoothLeft(15,SPEED);
+										Driver.driveSmoothLeft(15,SPEED);
 										lastDirection="left";
 										break;
 									}
@@ -73,7 +124,7 @@ public class AvoidController extends Controller{
 								lostSight=true;
 							}else{
 								lostSight=false;
-								Driver.turnSmoothRight(20,SPEED);
+								Driver.driveSmoothRight(20,SPEED);
 								lastDirection="straight";
 							}
 						}
@@ -89,7 +140,7 @@ public class AvoidController extends Controller{
 					if(value==1){
 						//right sensor sees black
 						blackRight=true;
-						Driver.turnSmoothRight(2,2);
+						Driver.driveSmoothRight(2,2);
 						foundLine=true;
 					}else{
 						blackRight=false;
@@ -98,7 +149,7 @@ public class AvoidController extends Controller{
 			}
 		}
 	}
-
+	
 	@Override
 	public void onStart() {
 		Driver.turnAngle(90,100);
@@ -110,7 +161,7 @@ public class AvoidController extends Controller{
 		foundLine=false;
 		lostSight=false;
 		lastDirection="left";
-		Driver.turnSmoothLeft(0,5);
+		Driver.driveSmoothLeft(0,5);
 	}
 
 	@Override
