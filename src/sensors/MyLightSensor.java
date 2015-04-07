@@ -19,7 +19,7 @@ public class MyLightSensor extends Sensor{
 	
 	/**
 	 * The constructor of the light sensor which defines the hardware port of the sensor.
-	 * @param port
+	 * @param port the port of the light sensor.
 	 */
 	public MyLightSensor(SensorPort port){
 		super();

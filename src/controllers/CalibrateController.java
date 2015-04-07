@@ -23,6 +23,8 @@ public class CalibrateController extends Controller{
 	
 	/**
 	 * Initialized the sensors and listens to the sensors.
+	 * @param leftLightSensor object used for the left light sensor.
+	 * @param rightLightSensor object used for the right light sensor.
 	 */
 	public CalibrateController(Sensor leftLightSensor,Sensor rightLightSensor){
 		leftLightSensor.addListener(this);

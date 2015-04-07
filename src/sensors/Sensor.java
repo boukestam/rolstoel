@@ -29,7 +29,7 @@ public abstract class Sensor implements Updatable{
 	
 	/**
 	 * Add listener to the "listeners" ArrayList.
-	 * @param listener
+	 * @param listener the sensor listener object that wants to listen to this sensor.
 	 */
 	public void addListener(SensorListener listener){
 		listeners.add(listener);

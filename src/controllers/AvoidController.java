@@ -88,8 +88,8 @@ public class AvoidController extends Controller{
 	 * When the value of one of the sensors that this object is listening for has changed, 
 	 * this method gets called with the new value and the sensor. In this method all logic of
 	 * moving around the obstacle and finding back the line is here controlled.
-	 * @source the sensor who's value has changed.
-	 * @value the new value of the sensor.
+	 * @param source the sensor who's value has changed.
+	 * @param value the new value of the sensor.
 	 */
 	@Override
 	public void valueChanged(Sensor source, int value){
