@@ -96,16 +96,22 @@ public class AvoidController extends Controller{
 		if(super.isRunning()){
 			if(!justStarted){
 				if(source==rangeSensor){
-					if(value<=distance){
+					if(value<=distance&&!seenOnce){
+						//als die het obstakel nog niet heeft gezien en hij ziet het
 						seenOnce=true;
 					}
 					if(!foundLine){
+						//als die de lijn nog niet heeft teruggevonden
 						if(!seenOnce){
+							//als hij het obstakel nog niet heeft gezien
 							lastDirection="left";
 							Driver.driveSmoothLeft(0,SPEED);
 						}else{
+							//als hij het obstakel al wel heeft gezien
 							if(value>=distance+threshold){
+								//als hij het obstakel niet kan zien
 								if(!lostSight){
+									//als hij het obstakel voor de eerste keer niet kan zien
 									switch(lastDirection){
 									case "left":
 										Driver.driveSmoothRight(0,SPEED);
@@ -116,15 +122,16 @@ public class AvoidController extends Controller{
 										lastDirection="left";
 										break;
 									case "straight":
-										Driver.driveSmoothLeft(15,SPEED);
+										Driver.driveSmoothLeft(12,SPEED);
 										lastDirection="left";
 										break;
 									}
+									lostSight=true;
 								}
-								lostSight=true;
 							}else{
+								//als hij het obstakel wel kan zien
 								lostSight=false;
-								Driver.driveSmoothRight(20,SPEED);
+								Driver.driveSmoothRight(200,SPEED);
 								lastDirection="straight";
 							}
 						}
