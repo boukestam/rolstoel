@@ -109,8 +109,7 @@ public class DestinationController extends Controller{
 	
 	/**
 	 * When the value of one of the sensors that this object is listening for has changed, 
-	 * this method gets called with the new value and the sensor. In this method all logic of
-	 * keep following the line and finding back the line is here controlled.
+	 * this method gets called with the new value and the sensor. 
 	 * @param source the sensor who's value has changed.
 	 * @param value the new value of the sensor.
 	 */
@@ -139,40 +138,48 @@ public class DestinationController extends Controller{
 				}
 			}
 			
-			// Left and Right sensor detecting the black line
-			if(blackLeft&&blackRight){
-				if(lastDetectedSensor.equals("left")){
-					Driver.turnRight(TURN_SPEED);
-				}else{
-					Driver.turnLeft(TURN_SPEED);
-				}
+			drive();
+		}
+	}
+	
+	/**
+	 * In this method all logic of keep following the line and 
+	 * finding back the line is here controlled.
+	 */
+	public void drive(){
+		// Left and Right sensor detecting the black line
+		if(blackLeft&&blackRight){
+			if(lastDetectedSensor.equals("left")){
+				Driver.turnRight(TURN_SPEED);
+			}else{
+				Driver.turnLeft(TURN_SPEED);
 			}
-			// Left sensor detecting the black line
-			else if(blackLeft){
-				Driver.driveSmoothLeft(STRAIGHT_TURN_RADIUS,(int) SPEED);
-				lastDetectedSensor="left";
-				turnRadius=INIT_TURN_RADIUS;
-			}
-			// Right sensor detecting the black line
-			else if(blackRight){
-				Driver.driveSmoothRight(STRAIGHT_TURN_RADIUS,(int) SPEED);
-				lastDetectedSensor="right";
-				turnRadius=INIT_TURN_RADIUS;
-			}
-			// Both sensors not detecting the black line
-			else{
-				if(lastDetectedSensor.equals("left")){
-					Driver.driveSmoothLeft(turnRadius,(int) TURN_SPEED);
-				}else{
-					Driver.driveSmoothRight(turnRadius,(int) TURN_SPEED);
-				}
+		}
+		// Left sensor detecting the black line
+		else if(blackLeft){
+			Driver.driveSmoothLeft(STRAIGHT_TURN_RADIUS,(int) SPEED);
+			lastDetectedSensor="left";
+			turnRadius=INIT_TURN_RADIUS;
+		}
+		// Right sensor detecting the black line
+		else if(blackRight){
+			Driver.driveSmoothRight(STRAIGHT_TURN_RADIUS,(int) SPEED);
+			lastDetectedSensor="right";
+			turnRadius=INIT_TURN_RADIUS;
+		}
+		// Both sensors not detecting the black line
+		else{
+			if(lastDetectedSensor.equals("left")){
+				Driver.driveSmoothLeft(turnRadius,(int) TURN_SPEED);
+			}else{
+				Driver.driveSmoothRight(turnRadius,(int) TURN_SPEED);
 			}
 		}
 	}
 	
 	@Override
 	public void onStart() {
-		
+		drive();
 	}
 	
 	@Override
